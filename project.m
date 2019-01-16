@@ -1,4 +1,4 @@
-a = prnist([0:9],[1:4:1000]);
+a = pre_process(100,20);
 
 %% Pre-process dataset (make all images square and bring them to same size)
 processed_dataset = im_box(a,0,1);
