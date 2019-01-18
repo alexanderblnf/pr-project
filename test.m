@@ -25,6 +25,7 @@ end
 [w_i, r_i] = featseli(trn, 'eucl-m', 32);
 
 %%
+evaluations = evaluations_feat;
 for i = 1 : length(evaluations)
-    disp(evaluations_test{:, i});
+    disp(evaluations{:, i});
 end

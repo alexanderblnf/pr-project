@@ -1,4 +1,4 @@
-function processed_dataset = pre_process(dataset_step, image_size)
+function [processed_dataset, data] = pre_process(dataset_step, image_size)
   
     %% prnist
     a = prnist(0:9,1:dataset_step:1000);
