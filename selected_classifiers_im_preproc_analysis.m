@@ -43,3 +43,8 @@ classifiers = set1;
 [errP, stdP] = prcrossval(dataset, combinedP, 10, 1);
 [errS, stdS] = prcrossval(dataset, combinedS, 10, 1);
 
+%%
+dataset = nist_dis;
+classifier = fisherc;
+
+result = feature_extraction(dataset, classifier);
