@@ -45,8 +45,14 @@ function eval = feature_extraction(dataset, classifier)
 
         if err_m < err_N
             N = m - 1;
+            eval.error = err_m;
+            eval.std = std_m;
+            eval.dimension = m;
         elseif err_m > err_N
             index = m + 1;
+            eval.error = err_m;
+            eval.std = std_m;
+            eval.dimension = m;
         end
     end
 end

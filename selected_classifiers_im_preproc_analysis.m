@@ -44,7 +44,7 @@ classifiers = set1;
 [errS, stdS] = prcrossval(dataset, combinedS, 10, 1);
 
 %%
-dataset = nist_dis;
-classifier = fisherc;
+dataset = nist_dis_cos;
+classifier = knnc([], 3);
 
 result = feature_extraction(dataset, classifier);
