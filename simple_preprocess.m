@@ -1,6 +1,6 @@
-function processed_dataset = simple_preprocess(dataset_step, image_size)
+function processed_dataset = simple_preprocess(a, image_size)
 
-a = prnist([0:9],[1:dataset_step:1000]);
+% a = prnist([0:9],[1:dataset_step:1000]);
 
 %% Pre-process dataset (make all images square and bring them to same size)
 processed_dataset = im_box(a,0,1);

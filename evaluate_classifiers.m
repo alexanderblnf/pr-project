@@ -1,8 +1,12 @@
-function evaluations = evaluate_classifiers(dataset, classifiers, names)
+function evaluations = evaluate_classifiers(dataset, classifiers, names, reps, is_dis)
     evaluations = {};
    
     for i = 1: length(classifiers)
-        [err, std] = prcrossval(dataset, classifiers{:, i}, 10, 2);
+        if is_dis == true
+            [err, std] = crossvald(dataset, classifiers{:, i}, 10, [], reps);
+        else
+            [err, std] = prcrossval(dataset, classifiers{:, i}, 10, reps);
+        end
         eval = struct;
         eval.name = names{:, i};
         eval.error = err;

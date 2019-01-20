@@ -47,11 +47,11 @@ classifiers = set1;
 [errS, stdS] = prcrossval(dataset, combinedS, 10, 1);
 
 %%
-dataset = nist_dis;
-classifier = bpxnc([], [30 20], 1000);
+dataset = nist_feat;
+    classifier = bpxnc([], [30 20], 1000);
 [M, N] = size(dataset);
 
-result = feature_extraction_2(dataset, classifier, 10, N);
+result = feature_extraction_2(dataset, classifier, 2, N);
 
 %%
 dataset = nist_pix;
@@ -62,7 +62,7 @@ W = dataset * pcam([], 43);
 
 %%
 
-evaluations = evaluations_dis_cos;
+evaluations = evaluations_prof;
 for i = 1 : length(evaluations)
     disp(evaluations{:, i});
 end

@@ -1,19 +1,21 @@
 %% Generate datasets
 image_size = 20;
 dataset_step = 4;
-[processed_dataset, data] = pre_process(dataset_step, image_size);
+% [processed_dataset, data] = pre_process(dataset_step, image_size);
+processed_dataset_simple = simple_preprocess(dataset_step, image_size);
 %%
-[nist_feat, nist_pix, nist_dis, nist_dis_cos] = feature_generation(processed_dataset);
+[~, nist_pix, nist_dis, nist_dis_cos] = feature_generation(processed_dataset, true, false);
+[nist_feat, ~, ~, ~] = feature_generation(processed_dataset_simple, true, false);
 
 %% Select classifiers
-classifiers = {loglc, fisherc, knnc([], 1), knnc([], 3), parzenc, bpxnc([],[26 20],1000)};
+classifiers = {loglc, fisherc, knnc([], 1), knnc([], 3), parzenc, bpxnc([],[30 20],1000)};
 names = {'loglc', 'fisherc', '1-NN', '3-NN', 'Parzen', 'bpxnc'};
 
 %% Test feature dataset
 evaluations_feat = evaluate_classifiers(nist_feat, classifiers, names);
 
 %% Test profile dataset
-% evaluations_prof = evaluate_classifiers(nist_profile, classifiers, names);
+evaluations_prof = evaluate_classifiers(nist_profile, classifiers, names, 2);
 
 %% Test pixel dataset
 evaluations_pix = evaluate_classifiers(nist_pix, classifiers, names);
@@ -44,7 +46,14 @@ classifiers = set1;
 [errS, stdS] = prcrossval(dataset, combinedS, 10, 1);
 
 %%
-dataset = nist_dis;
+dataset = nist_feat;
 classifier = fisherc;
 
-result = feature_extraction(dataset, classifier);
+result = feature_extraction_2(dataset, classifier);
+
+%%
+dataset = nist_dis_cos;
+classifier = knnc([], 3);
+
+W = dataset * pcam([], 10);
+[err_N, std_N] = prcrossval(dataset, classifier, 10, 5);
