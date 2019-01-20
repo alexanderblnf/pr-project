@@ -1,9 +1,15 @@
 %% Tests various feature selection techniques and chooses the best one
-function [error_curves, optimal_feats] = feature_selection(num_feats, trn, tst, classf, step, only_individual)
+function [error_curves, optimal_feats] = feature_selection(num_feats, trn, tst, classf, step, only_individual, is_dis)
     
     % Individual selection
-    [w_i, r_i] = featseli(trn, 'eucl-m', num_feats);
-    e_i = clevalf(trn * w_i, classf, [1:step:num_feats], [], 1, tst * w_i);
+%     [w_i, r_i] = featseli(trn, 'eucl-m', num_feats);
+    w_i = trn * featseli;
+    if is_dis == true
+        [ds, dt] = genddat(trn, 0.5);
+        e_i = clevald(ds * w_i, classf, [1:step:num_feats], [], 1, dt * w_i);
+    else
+        e_i = clevalf(trn * w_i, classf, [1:step:num_feats], [], 1, tst * w_i);
+    end
     e_i.names = strcat(e_i.names, '-individual');
     
     if only_individual == true

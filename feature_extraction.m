@@ -23,7 +23,7 @@
 % [min_err, dimension] = min(total_err);
 % result = evaluations{:, dimension};
 
-function eval = feature_extraction(dataset, classifier)
+function eval = feature_extraction(dataset, classifier, is_dis)
     [M, N] = size(dataset);
     index = 1;
     eval = struct;
@@ -32,10 +32,18 @@ function eval = feature_extraction(dataset, classifier)
         disp(m);
 
         W = dataset * pcam([], m);
-        [err_m, std_m] = prcrossval(dataset, W * classifier, 10, 2);
-
+        if is_dis == true
+            [err_m, std_m] = crossvald(dataset, classifier * W, 10, [], 2);
+        else
+            [err_m, std_m] = prcrossval(dataset, W * classifier, 10, 2);
+        end
+        
         W = dataset * pcam([], N);
-        [err_N, std_N] = prcrossval(dataset, W * classifier, 10, 2);
+        if is_dis == true
+            [err_N, std_N] = crossvald(dataset, W * classifier, 10, [], 2);
+        else
+            [err_N, std_N] = prcrossval(dataset, W * classifier, 10, 2);
+        end
 
         if index == N
             eval.error = err_m;
@@ -53,7 +61,7 @@ function eval = feature_extraction(dataset, classifier)
         end
     end
     
-     eval.error = err_m;
+    eval.error = err_m;
     eval.std = std_m;
     eval.dimension = m;
 end
