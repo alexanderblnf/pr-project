@@ -1,7 +1,7 @@
 %% Automatically cut numbers and dd labels
 clear all; close all; clc;
 % Load image and convert to black and white image
-I = imread('scn.png');  % Load image
+I = imread('img/scn.png');  % Load image
 J = rgb2gray(I);        % convert to gray Scale
 m = mean(J(:));        
 s = std(double(J(:)));
@@ -24,7 +24,7 @@ for i=1:size(rp)
         ob = imcrop(ob,(rp(i).BoundingBox));
         % hacky resizing  
         [H,W] = size(ob);
-        tmp = zeros(max(H,W),max(H,W));
+        tmp = zeros(max(H,W),max(H,W),'logical');
         tmp(1:H,1:W)=ob;
         ob = tmp;
         ob = imresize(ob,[240 240]);
