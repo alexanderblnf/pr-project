@@ -1,9 +1,14 @@
 %% Generate datasets
 image_size = 20;
-dataset_step = 100;
+dataset_step = 25;
 [processed_dataset, data] = pre_process(dataset_step, image_size);
 %%
-[nist_feat, ~, nist_pix, nist_dis, nist_dis_cos] = feature_generation(processed_dataset, true, false);
+dataset_step = 4;
+[processed_dataset_simple] = simple_preprocess(dataset_step, image_size);
+[nist_feat_big_simple, nist_profile_big_simple, ~, ~, ~] = feature_generation(processed_dataset_simple, true, true);
+
+%%
+[nist_feat_big, ~, nist_pix_big, nist_dis_big, nist_dis_cos_big] = feature_generation(processed_dataset, true, false);
 
 %% Select classifiers
 classifiers = {ldc, fisherc, knnc([], 1), parzenc, bpxnc([],[30 20],1000)};
@@ -39,12 +44,18 @@ set4 = {knnc([], 1), parzenc};
 set5 = {knnc([], 3), parzenc};
 
 %% 
-dataset = nist_pix;
-classifiers = set1;
-[combinedP, combinedS, names] = combined_classifiers(dataset, classifiers);
-
-[errP, stdP] = prcrossval(dataset, combinedP, 10, 1);
-[errS, stdS] = prcrossval(dataset, combinedS, 10, 1);
+dataset1 = nist_pix;
+dataset2 = nist_feat;
+dataset3 = nist_profile_big_simple;
+c1 = parzenc;
+c2 = ldc;
+c3 = ldc;
+num_pc = [32, 16];
+[combinedP, combinedS, names] = combined_classifiers(dataset1, num_pc,c1, c2, c3);
+%%
+[errP, stdP] = prcrossval([dataset1 dataset1 dataset2], combinedP, 10, 1);
+%%
+[errS, stdS] = prcrossval(dataset1, combinedS, 10, 2);
 
 %%
 dataset = nist_feat;
@@ -66,3 +77,95 @@ evaluations = evaluations_prof;
 for i = 1 : length(evaluations)
     disp(evaluations{:, i});
 end
+
+%% Train best classifier
+dataset1 = nist_pix;
+dataset2 = nist_dis;
+
+classifier = parzenc;
+
+W1 = dataset1 * pcam([], 32) * parzenc;
+W2 = dataset1 * pcam([], 42) * knnc([], 1);
+
+parallel = [W1; W2];
+seq = [W1 W2];
+comb = parallel * prodc;
+comb1 = seq * prodc;
+
+% w = W * classifier; 
+w = dataset1 * comb1;
+%%
+dataset1 = nist_pix;
+dataset2 = nist_feat;
+% dataset3 = nist_dis;
+
+W1 = dataset1 * pcam([], 30) * parzenc;
+W2 = loglc;
+% W3 = dataset3 * pcam([], 32) * ldc;
+
+parallel = [W1; W2];
+
+comb = parallel * prodc;
+
+w = [dataset1 dataset2] * comb;
+%%
+dataset1 = nist_pix;
+dataset2 = nist_feat;
+
+W1 = dataset1 * pcam([], 30) * parzenc;
+W2 = dataset1 * pcam([], 16) * ldc;
+% W3 = dataset3 * pcam([], 32) * ldsc;
+
+seq = [W1 W2];
+
+comb = seq * minc;
+
+w = dataset1 * comb;
+
+%%
+dataset1 = nist_pix_big;
+dataset2 = nist_feat_big_simple;
+dataset3 = nist_profile_big_simple;
+
+c1 = parzenc;
+c2 = loglc;
+c3 = parzenc;
+
+W1 = dataset1 * pcam([], 29) * c1;
+W2 = c2;
+% W3 = dataset3 * pcam([], 32) * ldc;
+
+parallel = [W1; W2];
+
+comb = parallel * prodc;
+
+w = [dataset1 dataset2] * comb;
+%%
+dataset1 = nist_pix_big;
+comb = (perlc*qdc([],[],1e-6));
+W = dataset1 * comb;
+[err1, st1d1] = prcrossval(dataset, comb, 10, 5);
+
+%%
+errors_s2_1 = zeros(1, 10);
+for i = 1 : 10
+    errors_s2_1(i) = nist_eval('my_rep', w, 10);
+end
+disp(min(errors_s2_1));
+disp(mean(errors_s2_1));
+disp(max(errors_s2_1));
+
+%%
+classifiers = {ldc, fisherc, knnc([], 1), parzenc, nmc};
+names = {'ldc', 'fisherc', '1-NN', 'parzenc', 'nmc'};
+results_prof = feature_extraction_frac(nist_dis_cos, classifiers);
+
+%%
+for i = 1 : length(results_prof)
+    plot(0.1: 0.1 : 1, results_prof{i}, 'LineWidth', 1.5);
+    hold on;
+end
+legend(names);
+xlabel('Percentage of retained variance');
+ylabel('Error');
+title('PCA Analysis - Dissimilarity Cosine');

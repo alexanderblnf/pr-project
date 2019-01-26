@@ -1,14 +1,15 @@
-function [combinedP, combinedS, names] = combined_classifiers(data, classifiers)
+function [combinedP, combinedS, names] = combine_2_classifiers_1_pca(data1, num_pc, c1, c2)
 
-n = length(classifiers);
 parallel = [];
 seq = [];
 
-for i = 1 : n
-    w = data * classifiers{:, i};
-    parallel = [parallel; w];
-    seq = [seq w];
-end
+w1 = data1 * pcam([], num_pc);
+
+W1 = w1 * c1;
+W2 = c2;
+
+parallel = [W1; W2];
+seq = [W1 W2];
 
 p_mean = parallel * meanc;
 p_min = parallel * minc;
