@@ -78,21 +78,28 @@ num_pc = 25;
 %% Evaluate parallel combination
 [errP, stdP] = prcrossval([dataset1 dataset2], combinedP, 10, 1);
 
-%% Step 6 - Evaluate system - Train selected classifier
-
-dataset1 = nist_pix;
-
-W1 = dataset1 * pcam([], 25) * parzenc;
-
-combS = W1 * meanc;
-
-w1 = dataset1 * combS;
-
 %% Evaluate
-errors_s2 = zeros(1, 10);
+errors_s2 = zeros(1, 20);
 for i = 1 : 20
-    errors_s2(i) = nist_eval('my_rep2', w1, 10);
+    image_size = 18;
+    dataset_step = 100;
+    [small_processed_dataset, data] = pre_process(dataset_step, image_size);
+
+    [~, ~, nist_pix, ~, ~] = feature_generation(small_processed_dataset, false, false, false);
+    classf = train_classf(nist_pix);
+    errors_s2(i) = nist_eval('my_rep2', classf, 10);
 end
+
 disp(min(errors_s2));
 disp(mean(errors_s2));
 disp(max(errors_s2));
+
+function classf = train_classf(dataset)
+    W1 = dataset * pcam([], 25) * parzenc;
+    W2 = dataset * pcam([], 31) * ldc;
+
+    seq = [W1 W2];
+    W2 = seq * meanc;
+
+    classf = dataset * W2;
+end

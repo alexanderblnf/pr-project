@@ -8,6 +8,10 @@ dataset_step = 100;
 %% Train classifier
 dataset1 = nist_pix;
 
-W2 = dataset1 * pcam([], 25) * parzenc;
+W1 = dataset1 * pcam([], 25) * parzenc;
+W2 = dataset1 * pcam([], 31) * ldc;
+
+seq = [W1 W2];
+W2 = seq * meanc;
 
 w2 = dataset1 * W2;
