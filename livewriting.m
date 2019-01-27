@@ -22,10 +22,42 @@ for i=1:size(rp)
     if rp(i).Area > 1e3
         ob = I;
         ob = imcrop(ob,(rp(i).BoundingBox));
-        % hacky resizing  
+        % Resizing  
         [H,W] = size(ob);
-        tmp = zeros(max(H,W),max(H,W),'logical');
-        tmp(1:H,1:W)=ob;
+        tmp = zeros(max(H,W),max(H,W), 'logical');
+        
+        [HH, WW] = size(tmp);
+        hdiff = (HH - H) / 2;
+        wdiff = (WW - W) / 2;
+        
+        %% Center digit
+        if hdiff > 0
+            if floor(hdiff) == hdiff
+                startH = 1 + hdiff;
+                endH = H + hdiff;
+            else
+                startH = ceil(hdiff);
+                endH = H + floor(hdiff);
+            end
+        else
+            startH = 1;
+            endH = H;
+        end
+        
+        if wdiff > 0
+            if floor(wdiff) == wdiff
+                startW = 1 + wdiff;
+                endW = W + wdiff;
+            else
+                startW = ceil(wdiff);
+                endW = W + floor(wdiff);
+            end
+        else
+            startW = 1;
+            endW = W;
+        end
+        
+        tmp(startH:endH,startW:endW)=ob;
         ob = tmp;
         ob = imresize(ob,[240 240]);
         nmbr(:,:,j) = ob;
@@ -33,7 +65,8 @@ for i=1:size(rp)
         j = j+1;
     end
 end
-% Add labels to the digits
+
+%% Add labels to the digits
 img = im2obj(nmbr);
 lab = [];
 for i=1:size(img)
@@ -41,4 +74,4 @@ for i=1:size(img)
     i_nmbr = input('digit_');
     lab = [lab i_nmbr];
 end
-live_data_set = setlabels(img,lab');
+live_dataset = setlabels(img,lab');

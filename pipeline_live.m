@@ -28,5 +28,5 @@ comb = parallel * prodc;
 
 w = [dataset1 dataset2] * comb;
 
-%% 
+%% Test error
 errLive = [live_processed_dataset live_processed_dataset_feat] * w * testc;
