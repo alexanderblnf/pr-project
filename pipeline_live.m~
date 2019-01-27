@@ -12,8 +12,8 @@ dataset_step = 4;
 [processed_dataset, ~] = pre_process(dataset_step, image_size);
 processed_dataset_simple = simple_preprocess(dataset_step, image_size);
 
-[~, ~,nist_pix, ~, ~] = feature_generation(processed_dataset, true, false, false);
-[nist_feat, ~, ~, ~, ~] = feature_generation(processed_dataset_simple, true, false, false);
+[~, ~,nist_pix, ~, ~] = feature_generation(processed_dataset, true, false);
+[nist_feat, ~, ~, ~, ~] = feature_generation(processed_dataset_simple, true, false);
 
 %% Train classifier
 dataset1 = nist_pix;
@@ -24,9 +24,9 @@ W2 = loglc;
 
 parallel = [W1; W2];
 
-comb = parallel * prodc;
+comb = parallel * m;
 
 w = [dataset1 dataset2] * comb;
 
-%% Test error
+%% 
 errLive = [live_processed_dataset live_processed_dataset_feat] * w * testc;

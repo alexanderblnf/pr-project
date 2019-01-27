@@ -5,10 +5,10 @@ dataset_step = 4;
 %%
 dataset_step = 4;
 [processed_dataset_simple] = simple_preprocess(dataset_step, image_size);
-[nist_feat_big_simple, nist_profile_big_simple, ~, ~, ~] = feature_generation(processed_dataset_simple, true, true);
+[nist_feat_big_simple, nist_profile_big_simple, ~, ~, ~] = feature_generation(processed_dataset_simple, true, true, false);
 
 %%
-[nist_feat_big, ~, nist_pix_big, nist_dis_big, nist_dis_cos_big] = feature_generation(processed_dataset, true, false);
+[nist_feat_big, ~, nist_pix_big, nist_dis_big, nist_dis_cos_big] = feature_generation(processed_dataset, true, false, true);
 
 %% Select classifiers
 classifiers = {ldc, fisherc, knnc([], 1), parzenc, bpxnc([],[30 20],1000)};

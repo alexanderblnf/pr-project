@@ -83,11 +83,8 @@ num_pc = 25;
 dataset1 = nist_pix;
 
 W1 = dataset1 * pcam([], 25) * parzenc;
-W2 = dataset1 * pcam([], 31) * ldc;
 
-seq = [W1 W2];
-
-combS = seq * meanc;
+combS = W1 * meanc;
 
 w1 = dataset1 * combS;
 

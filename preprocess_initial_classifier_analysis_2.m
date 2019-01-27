@@ -4,7 +4,7 @@ dataset_step = 100;
 [small_processed_dataset, data] = pre_process(dataset_step, image_size);
 
 %%
-[nist_feat_prep, ~, nist_pix, nist_dis, nist_dis_cos] = feature_generation(small_processed_dataset, true, false);
+[nist_feat_prep, ~, nist_pix, nist_dis, nist_dis_cos] = feature_generation(small_processed_dataset, true, false, true);
 
 %% Test feature dataset
 classifiers = {loglc, fisherc, ldc, naivebc, nmc, qdc, knnc([], 1), knnc([], 2), knnc([], 3), parzenc, bpxnc([],[26 20],1000), perlc([], 1000), dtc([])};
