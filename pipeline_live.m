@@ -1,5 +1,6 @@
-%% Generate dataset from picture
-livewriting;
+%% Generate dataset from picture - Optional step, the dataset is already in live_dataset.mat
+
+% livewriting;
 
 %% Process data
 image_size = 20;
